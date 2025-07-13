@@ -19,59 +19,55 @@ The following roles are considered trusted. This means entities assigned to thes
 
 trusted roles:
 # role / most preferred holder type or contract
-1. owner in all contracts (including openzeppelin-contracts/contracts/proxy/transparent
+`owner` holders in all contracts (including openzeppelin-contracts/contracts/proxy/transparent
 /ProxyAdmin.sol) (admin, proxy-admin)
-2. Consensus:signer (admin)
-3. DEFAULT_ADMIN_ROLE (admin)
-4. keccak256("managers.ShareManager.SET_FLAGS_ROLE") (admin)
-5. keccak256("managers.ShareManager.SET_ACCOUNT_INFO_ROLE") (admin)
-6. keccak256("managers.RiskManager.SET_VAULT_LIMIT_ROLE") (admin)
-7. keccak256("managers.RiskManager.SET_SUBVAULT_LIMIT_ROLE") (admin)
-8. keccak256("managers.RiskManager.ALLOW_SUBVAULT_ASSETS_ROLE") (admin)
-9. keccak256("managers.RiskManager.DISALLOW_SUBVAULT_ASSETS_ROLE") (admin)
-10. keccak256("managers.RiskManager.MODIFY_SUBVAULT_BALANCE_ROLE") (admin)
-11. keccak256("managers.RiskManager.MODIFY_PENDING_ASSETS_ROLE") (queues)
-12. keccak256("managers.RiskManager.MODIFY_VAULT_BALANCE_ROLE") (queues, admin)
-13. keccak256("managers.RiskManager.MODIFY_SUBVAULT_BALANCE_ROLE") (Vault.sol, admin)
-14. keccak256("modules.ShareModule.SET_HOOK_ROLE") (admin)
-15. keccak256("modules.ShareModule.CREATE_DEPOSIT_QUEUE_ROLE") (admin)
-16. keccak256("modules.ShareModule.CREATE_REDEEM_QUEUE_ROLE") (admin)
-17. keccak256("modules.ShareModule.PAUSE_QUEUE_ROLE") (admin)
-18. keccak256("modules.ShareModule.UNPAUSE_QUEUE_ROLE") (admin)
-19. keccak256("modules.ShareModule.SET_QUEUE_LIMIT_ROLE") (admin)
-20. keccak256("modules.ShareModule.REMOVE_QUEUE_ROLE") (admin)
-21. keccak256("modules.VaultModule.CREATE_SUBVAULT_ROLE") (admin)
-22. keccak256("modules.VaultModule.DISCONNECT_SUBVAULT_ROLE") (admin)
-23. keccak256("modules.VaultModule.RECONNECT_SUBVAULT_ROLE") (admin)
-24. keccak256("modules.VaultModule.PULL_LIQUIDITY_ROLE") (admin)
-25. keccak256("modules.VaultModule.PUSH_LIQUIDITY_ROLE") (admin)
-26. keccak256("oracles.Oracle.SUBMIT_REPORTS_ROLE") (operator)
-27. keccak256("oracles.Oracle.ACCEPT_REPORT_ROLE") (admin)
-28. keccak256("oracles.Oracle.SET_SECURITY_PARAMS_ROLE") (admin)
-29. keccak256("oracles.Oracle.ADD_SUPPORTED_ASSETS_ROLE") (admin)
-30. keccak256("oracles.Oracle.REMOVE_SUPPORTED_ASSETS_ROLE") (admin)
-31. keccak256("permissions.protocols.SymbioticVerifier.CALLER_ROLE") (operator)
-32. keccak256("permissions.protocols.SymbioticVerifier.MELLOW_VAULT_ROLE") (Subvault.sol)
-33. keccak256("permissions.protocols.SymbioticVerifier.SYMBIOTIC_FARM_ROLE") (symbiotic: DefaultStakerRewards.sol)
-34. keccak256("permissions.protocols.SymbioticVerifier.SYMBIOTIC_VAULT_ROLE") (symbiotic: Vault.sol)
-35. keccak256("permissions.protocols.EigenLayerVerifier.ASSET_ROLE") (vault asset)
-36. keccak256("permissions.protocols.EigenLayerVerifier.CALLER_ROLE") (operator)
-37. keccak256("permissions.protocols.EigenLayerVerifier.MELLOW_VAULT_ROLE") (Subvault.sol)
-38. keccak256("permissions.protocols.EigenLayerVerifier.OPERATOR_ROLE") (EigenLayer: operator)
-39. keccak256("permissions.protocols.EigenLayerVerifier.RECEIVER_ROLE") (Subvault.sol)
-40. keccak256("permissions.protocols.EigenLayerVerifier.STRATEGY_ROLE") (EigenLayer: strategy)
-41. keccak256("permissions.protocols.ERC20Verifier.ASSET_ROLE") (vault asset)
-42. keccak256("permissions.protocols.ERC20Verifier.CALLER_ROLE") (operator)
-43. keccak256("permissions.protocols.ERC20Verifier.RECIPIENT_ROLE") (external contract)
-44. keccak256("permissions.Verifier.SET_MERKLE_ROOT_ROLE") (admin)
-45. keccak256("permissions.Verifier.CALLER_ROLE") (operator)
-46. keccak256("permissions.Verifier.ALLOW_CALL_ROLE") (admin)
-47. keccak256("permissions.Verifier.DISALLOW_CALL_ROLE") (admin)
+`signer` in Consensus.sol contract (admin)
+keccak256("managers.ShareManager.SET_FLAGS_ROLE")
+keccak256("managers.ShareManager.SET_ACCOUNT_INFO_ROLE")
+keccak256("managers.RiskManager.SET_VAULT_LIMIT_ROLE")
+keccak256("managers.RiskManager.SET_SUBVAULT_LIMIT_ROLE")
+keccak256("managers.RiskManager.ALLOW_SUBVAULT_ASSETS_ROLE")
+keccak256("managers.RiskManager.DISALLOW_SUBVAULT_ASSETS_ROLE")
+keccak256("managers.RiskManager.MODIFY_PENDING_ASSETS_ROLE")
+keccak256("managers.RiskManager.MODIFY_VAULT_BALANCE_ROLE")
+keccak256("managers.RiskManager.MODIFY_SUBVAULT_BALANCE_ROLE")
+keccak256("modules.ShareModule.SET_HOOK_ROLE")
+keccak256("modules.ShareModule.CREATE_QUEUE_ROLE")
+keccak256("modules.ShareModule.SET_QUEUE_STATUS_ROLE")
+keccak256("modules.ShareModule.SET_QUEUE_LIMIT_ROLE")
+keccak256("modules.ShareModule.REMOVE_QUEUE_ROLE")
+keccak256("modules.VaultModule.CREATE_SUBVAULT_ROLE")
+keccak256("modules.VaultModule.DISCONNECT_SUBVAULT_ROLE")
+keccak256("modules.VaultModule.RECONNECT_SUBVAULT_ROLE")
+keccak256("modules.VaultModule.PULL_LIQUIDITY_ROLE")
+keccak256("modules.VaultModule.PUSH_LIQUIDITY_ROLE")
+keccak256("oracles.Oracle.SUBMIT_REPORTS_ROLE")
+keccak256("oracles.Oracle.ACCEPT_REPORT_ROLE")
+keccak256("oracles.Oracle.SET_SECURITY_PARAMS_ROLE")
+keccak256("oracles.Oracle.ADD_SUPPORTED_ASSETS_ROLE")
+keccak256("oracles.Oracle.REMOVE_SUPPORTED_ASSETS_ROLE")
+keccak256("permissions.protocols.SymbioticVerifier.CALLER_ROLE")
+keccak256("permissions.protocols.SymbioticVerifier.MELLOW_VAULT_ROLE")
+keccak256("permissions.protocols.SymbioticVerifier.SYMBIOTIC_FARM_ROLE")
+keccak256("permissions.protocols.SymbioticVerifier.SYMBIOTIC_VAULT_ROLE")
+keccak256("permissions.protocols.EigenLayerVerifier.ASSET_ROLE")
+keccak256("permissions.protocols.EigenLayerVerifier.CALLER_ROLE")
+keccak256("permissions.protocols.EigenLayerVerifier.MELLOW_VAULT_ROLE")
+keccak256("permissions.protocols.EigenLayerVerifier.OPERATOR_ROLE")
+keccak256("permissions.protocols.EigenLayerVerifier.RECEIVER_ROLE")
+keccak256("permissions.protocols.EigenLayerVerifier.STRATEGY_ROLE")
+keccak256("permissions.protocols.ERC20Verifier.ASSET_ROLE")
+keccak256("permissions.protocols.ERC20Verifier.CALLER_ROLE")
+keccak256("permissions.protocols.ERC20Verifier.RECIPIENT_ROLE")
+keccak256("permissions.Verifier.SET_MERKLE_ROOT_ROLE")
+keccak256("permissions.Verifier.CALLER_ROLE")
+keccak256("permissions.Verifier.ALLOW_CALL_ROLE")
+keccak256("permissions.Verifier.DISALLOW_CALL_ROLE")
 
 Additional assumptions:
 1. No unbounded arrays or arbitrarily large input values will be accepted. All input parameters are constrained to prevent out-of-gas (OOG) conditions during execution.
 2. Lockup durations, Oracle timeouts, and other time-sensitive configuration values will be set within non-griefable and operationally safe bounds.
-3. Total fee rates configured in the system (e.g., performance + protocol + deposit + redeem fees) will always remain well below 25%.
+3. Total fee rates configured in the system (e.g., performance + protocol + deposit + redeem fees) will always remain well below 50%.
 4. `queueLimit` value will be configured such that no single operation risks exceeding the block gas limit, even under worst-case execution paths.
 5. While not enforced at the contract level, the total number of subvaults per MultiVault is assumed to remain under 100.
 6. Only implementations explicitly included within this scope will be deployed through Factory contracts.
@@ -101,11 +97,20 @@ No
 ___
 
 ### Q: Please discuss any design choices you made.
-1. Permissioned Signature Queues and Off-chain Pricing. The system uses permissioned signature queues in which the actual deposit or redemption price is determined off-chain by a consensus group of signers. While these prices are protected by default oracle checks, any findings that assume a malicious consensus group (i.e., colluding signers submitting manipulated prices) are considered out of scope and will be invalidated.
+Permissioned Signature Queues and Off-Chain Pricing
+The system utilizes permissioned signature queues, where deposit and redemption prices are determined off-chain by a consensus group of signers. Although default oracle checks protect these prices, any findings that assume a malicious or colluding consensus group submitting manipulated prices are considered out of scope and will be deemed invalid.
 
-2. stETH–ETH Price Assumption. The system assumes stETH and ETH have equal value for the purpose of all calculations and accounting. Therefore, any findings or attacks relying on deviations between stETH and ETH prices will be considered invalid.
+stETH–ETH Price Equivalence Assumption
+For all internal accounting and calculations, the system treats stETH and ETH as having equal value. As such, any issues or attack vectors that rely on price deviations between stETH and ETH are considered out of scope and will be treated as invalid.
 
-3. Oracle Role and Trusted Price Reports. The Oracle serves as the external entry point for price updates into the vault system. We assume all submitted Oracle reports are accurate and manipulation-resistant. However, in the rare case that a legitimate price deviation (e.g., due to a slashing event in a Symbiotic vault) triggers out-of-bounds conditions defined in the securityParameters, an `admin` is expected to adjust the security parameters (e.g., raise max deviation boundaries) prior to report submission, ensuring the updated report can be accepted.
+Oracle Reports and Trusted Inputs
+The Oracle acts as the trusted external source for submitting price updates to the vault system. It is assumed that all submitted reports are accurate and manipulation-resistant. In rare cases (e.g., slashing events in a Symbiotic vault) where legitimate price deviations exceed predefined bounds in securityParameters, an admin is expected to update those parameters (e.g., increase deviation thresholds) prior to report submission to ensure the new report is accepted.
+
+Lido Deposit Assumption
+It is assumed that submitting ETH into the stETH contract via LidoDepositHook will not fail due to Lido deposit limits at any time. Any findings based on the opposite assumption will be considered invalid.
+
+Timestamp Overflow Assumption
+It is assumed that block.timestamp will not exceed the uint32 range during the lifetime of this project. Any findings based on the opposite assumption will be considered invalid.
 ___
 
 ### Q: Please provide links to previous audits (if any) and all the known issues or acceptable risks.
