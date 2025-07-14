@@ -16,9 +16,8 @@ ___
 
 ### Q: Are there any limitations on values set by admins (or other roles) in the codebase, including restrictions on array lengths?
 The following roles are considered trusted. This means entities assigned to these roles are assumed to act in accordance with protocol safety assumptions, and all values they set are expected to be within safe, bounded, and reviewable ranges.
-
 trusted roles:
-# role / most preferred holder type or contract
+role / most preferred holder type or contract
 `owner` holders in all contracts (including openzeppelin-contracts/contracts/proxy/transparent
 /ProxyAdmin.sol) (admin, proxy-admin)
 `signer` in Consensus.sol contract (admin)
@@ -75,6 +74,7 @@ Additional assumptions:
 8. Only queues explicitly included within this scope will be used in the system.
 9. Only vault configurations (Vault.sol and Subvault.sol) explicitly included within this scope will be used in the system.
 
+
 ___
 
 ### Q: Are there any limitations on values set by admins (or other roles) in protocols you integrate with, including restrictions on array lengths?
@@ -88,7 +88,6 @@ ___
 ### Q: Are there any off-chain mechanisms involved in the protocol (e.g., keeper bots, arbitrage bots, etc.)? We assume these mechanisms will not misbehave, delay, or go offline unless otherwise specified.
 1. Off-chain Oracle bot: a dedicated off-chain bot is responsible for periodically collecting LP token prices and submitting them as part of Oracle reports.
 2. Flashbots Usage: flashbots or other private transaction relays may be used to execute actions performed by trusted actors (e.g., admins, operators), especially when timing, frontrunning protection, or MEV resistance is critical.
-
 
 ___
 
@@ -111,6 +110,7 @@ It is assumed that submitting ETH into the stETH contract via LidoDepositHook wi
 
 Timestamp Overflow Assumption
 It is assumed that block.timestamp will not exceed the uint32 range during the lifetime of this project. Any findings based on the opposite assumption will be considered invalid.
+
 ___
 
 ### Q: Please provide links to previous audits (if any) and all the known issues or acceptable risks.
@@ -118,7 +118,7 @@ No
 ___
 
 ### Q: Please list any relevant protocol resources.
-TBD
+https://mellowprotocol.notion.site/Flexible-Vaults-Architecture-22f02ad86276803c8fdfc694a0036d98
 ___
 
 ### Q: Additional audit information.
