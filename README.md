@@ -127,7 +127,7 @@ No
 
 # Audit scope
 
-[flexible-vaults @ 7fb6f53c1850694c35503f41b3c21d7e6f515f1c](https://github.com/mellow-finance/flexible-vaults/tree/7fb6f53c1850694c35503f41b3c21d7e6f515f1c)
+[flexible-vaults @ c2d66f36333d9f29457399fa54ddc68079d7b0a9](https://github.com/mellow-finance/flexible-vaults/tree/c2d66f36333d9f29457399fa54ddc68079d7b0a9)
 - [flexible-vaults/src/factories/Factory.sol](flexible-vaults/src/factories/Factory.sol)
 - [flexible-vaults/src/hooks/BasicRedeemHook.sol](flexible-vaults/src/hooks/BasicRedeemHook.sol)
 - [flexible-vaults/src/hooks/LidoDepositHook.sol](flexible-vaults/src/hooks/LidoDepositHook.sol)
