@@ -54,10 +54,19 @@ library FenwickTreeLibrary {
     /// @param tree The Fenwick tree to be extended.
     function extend(Tree storage tree) internal {
         uint256 length_ = tree._length;
+
+        //@>i overflow check ( if length > 2 ** 255, then it will overflow)
+        // This is necessary because the length is stored as a uint256 and we are doubling it
+        // If the length exceeds 2^255, it will overflow when we double it.
+        // The maximum length of the tree is 2^255 - 1, so we check if the current length is greater than or equal to 2^255.
+
         if (length_ >= (1 << 255)) {
             revert InvalidLength();
         }
-        tree._length = length_ << 1;
+        tree._length = length_ << 1;//@>i double the tree length
+        // Copy the last value to the new last position to maintain the cumulative sum.
+        // This is necessary to ensure that the new tree can be used correctly.
+        // The last value is the cumulative sum of all previous values.
         tree._values[(length_ << 1) - 1] = tree._values[length_ - 1];
     }
 
@@ -84,7 +93,10 @@ library FenwickTreeLibrary {
     function _modify(Tree storage tree, uint256 index, uint256 length_, int256 value) private {
         while (index < length_) {
             tree._values[index] += value;
-            index |= index + 1;
+            
+            index |= index + 1;//@>i bitwise OR operation to find the next index to update
+            // This operation effectively finds the next index that needs to be updated in the Fenwick Tree
+            // It works by adding 1 to the current index and then performing a bitwise OR 
         }
     }
 

@@ -10,7 +10,7 @@ import "./Queue.sol";
 
 contract DepositQueue is IDepositQueue, Queue {
     using FenwickTreeLibrary for FenwickTreeLibrary.Tree;
-    using Checkpoints for Checkpoints.Trace224;
+    using Checkpoints for Checkpoints.Trace224; //@>i an OZ library for checkpoints. It is used to store checkpoints of requests and prices. It is updated when a new deposit request is made or when prices are reported.it is 32byte(timestamp) + 224byte(value) = 256byte in total.
 
     bytes32 private immutable _depositQueueStorageSlot;
 
