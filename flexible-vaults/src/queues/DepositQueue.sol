@@ -66,30 +66,34 @@ contract DepositQueue is IDepositQueue, Queue {
         if (IShareModule(vault_).isPausedQueue(address(this))) {
             revert QueuePaused();
         }
+        //@>i shareModule is used to manage shares and deposits. here it check if the caller is whitelisted to deposit
         if (!IShareModule(vault_).shareManager().isDepositorWhitelisted(caller, merkleProof)) {
             revert DepositNotAllowed();
         }
+        //@>i check if the caller has a pending request = a request that has not been claimed yet
         if ($.requestOf[caller]._value != 0 && !_claim(caller)) {
             revert PendingRequestExists();
         }
 
         address asset_ = asset();
         TransferLibrary.receiveAssets(asset_, caller, assets);
+
         uint32 timestamp = uint32(block.timestamp);
+
         Checkpoints.Trace224 storage timestamps = _timestamps();
         uint256 index = timestamps.length();
         (, uint32 latestTimestamp,) = timestamps.latestCheckpoint();
         if (latestTimestamp < timestamp) {
             timestamps.push(timestamp, uint224(index));
-            if ($.requests.length() == index) {
-                $.requests.extend();
+            if ($.requests.length() == index) {//@>i tree is full? 
+                $.requests.extend();//@>i call fenwickTree extend
             }
         } else {
             --index;
         }
 
         IVaultModule(vault_).riskManager().modifyPendingAssets(asset_, int256(uint256(assets)));
-        $.requests.modify(index, int256(uint256(assets)));
+        $.requests.modify(index, int256(uint256(assets)));//@>i modify the tree at index with the assets
         $.requestOf[caller] = Checkpoints.Checkpoint224(timestamp, assets);
         emit DepositRequested(caller, referral, assets, timestamp);
     }
@@ -139,6 +143,7 @@ contract DepositQueue is IDepositQueue, Queue {
         return true;
     }
 
+    //@>i Handles the report of a new price from the oracle.Batch processing starts here
     function _handleReport(uint224 priceD18, uint32 timestamp) internal override {
         IShareModule vault_ = IShareModule(vault());
 
@@ -161,6 +166,8 @@ contract DepositQueue is IDepositQueue, Queue {
                 return;
             }
         }
+        //@>i Computes the total pending deposits in the interval = all new deposits not yet processed
+        //@>i Sum of all point updates applied via modify over that index range
         uint256 assets = uint256($.requests.get($.handledIndices, latestEligibleIndex));
         $.handledIndices = latestEligibleIndex + 1;
 

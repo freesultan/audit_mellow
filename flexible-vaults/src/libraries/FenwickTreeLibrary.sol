@@ -97,6 +97,7 @@ library FenwickTreeLibrary {
             index |= index + 1;//@>i bitwise OR operation to find the next index to update
             // This operation effectively finds the next index that needs to be updated in the Fenwick Tree
             // It works by adding 1 to the current index and then performing a bitwise OR 
+            //next index means parent index I guess
         }
     }
 
