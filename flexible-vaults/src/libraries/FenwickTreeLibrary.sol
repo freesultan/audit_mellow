@@ -117,9 +117,12 @@ library FenwickTreeLibrary {
     /// @param tree The Fenwick tree.
     /// @param index Right bound index for sum (inclusive).
     /// @return prefixSum The cumulative sum up to and including `index`.
+    //@>i How much money is waiting in buckets 0 through index?
     function _get(Tree storage tree, uint256 index) private view returns (int256 prefixSum) {
+        //@>q how this assembly works?
         assembly ("memory-safe") {
             mstore(0x20, tree.slot)
+
             for {} 1 { index := sub(index, 1) } {
                 mstore(0x00, index)
                 prefixSum := add(prefixSum, sload(keccak256(0x00, 0x40)))

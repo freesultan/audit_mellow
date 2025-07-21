@@ -31,6 +31,7 @@ abstract contract Queue is IQueue, ContextUpgradeable, ReentrancyGuardUpgradeabl
     // Mutable functions
 
     /// @inheritdoc IQueue
+    //@>i only vault can call this function which will call _handleReport in depositQueue
     function handleReport(uint224 priceD18, uint32 timestamp) external {
         if (_msgSender() != vault()) {
             revert Forbidden();

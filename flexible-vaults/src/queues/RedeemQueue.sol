@@ -202,7 +202,7 @@ contract RedeemQueue is IRedeemQueue, Queue {
     }
 
     // Internal functions
-
+    //@>i vault>queue>redeemQueue>handleReport
     function _handleReport(uint224 priceD18, uint32 timestamp) internal override {
         RedeemQueueStorage storage $ = _redeemQueueStorage();
 

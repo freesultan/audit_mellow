@@ -22,6 +22,7 @@ interface IQueue is IFactoryEntity {
     /// @notice Reverts when queue interactions are restricted due to governance or ACL pause.
     error QueuePaused();
 
+    //@>i every queue has one asset, one vault, timestamps(timestamps, value) pairs
     /// @notice Storage layout for a generic queue contract (deposit or redeem).
     struct QueueStorage {
         /// @notice The asset managed by this queue (ERC20 or ETH).

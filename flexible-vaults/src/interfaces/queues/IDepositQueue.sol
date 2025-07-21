@@ -65,12 +65,13 @@ interface IDepositQueue is IQueue {
         uint256 handledIndices; //@>q where do they use this? 
         /// @dev Mapping of user address to their latest deposit request.
         /// Each request is stored as a checkpoint with timestamp (key) and asset amount (value).
-        mapping(address account => Checkpoints.Checkpoint224) requestOf; //@>q why not use Checkpoints.Trace224? what's the max possible number of asset amount? 
+        mapping(address account => Checkpoints.Checkpoint224) requestOf; //@>q what's the max possible number of asset amount? 
         /// @dev Fenwick tree tracking cumulative asset deposits by timestamp indices.
         /// Enables efficient range sum queries and updates for oracle processing.
         FenwickTreeLibrary.Tree requests;
         /// @dev Price history reported by the oracle (indexed by timestamp).
         /// Used to convert deposited assets into vault shares.
+        //@>i this is collection of checkpoints, each checkpoint is a timestamp and price
         Checkpoints.Trace224 prices; //@>q where do they use this? how is it different from requestOf? when is it updated? 
     }
 
