@@ -66,6 +66,9 @@ contract DepositQueue is IDepositQueue, Queue {
         if (assets == 0) {
             revert ZeroValue();
         }
+        address caller = _msgSender();
+        DepositQueueStorage storage $ = _depositQueueStorage();
+ 
            address vault_ = vault();
         if (IShareModule(vault_).isPausedQueue(address(this))) {
             revert QueuePaused();
@@ -122,17 +125,14 @@ contract DepositQueue is IDepositQueue, Queue {
         if (exists && timestamp >= request._key) {
             revert ClaimableRequestExists();
         }
-        //@>i delete from the storage = reset to default
+        
         delete $.requestOf[caller];
-
 
         IVaultModule(vault()).riskManager().modifyPendingAssets(asset_, -int256(uint256(assets)));
         //@>i remove the request from the tree
         $.requests.modify(index, -int256(assets));
-        //@>i transfer assets back to the caller
+
         TransferLibrary.sendAssets(asset_, caller, assets);
-
-
         emit DepositRequestCanceled(caller, assets, request._key);
     }
     //@>q does after creating shares or/and claiming them, the values reset to zero? or they are still in the tree? is so, are they exploitable?
