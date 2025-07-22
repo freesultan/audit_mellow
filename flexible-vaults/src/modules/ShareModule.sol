@@ -133,6 +133,11 @@ abstract contract ShareModule is IShareModule, ACLModule {
 
     /// @inheritdoc IShareModule
     function getHook(address queue) public view returns (address) {
+        //@>i get the custom hook for the queue or defaulthook as a fallback
+        //@>i Each queue can have a custom hook, at most 1 hook per queue but there can be chaining with "nextHook"
+        //@>i but if it doesn't have one, it will use the default deposit or redeem
+        //@>i hook depending on whether it's a deposit or redeem queue. 
+
         ShareModuleStorage storage $ = _shareModuleStorage();
         address hook = $.customHooks[queue];
         return hook != address(0) ? hook : $.isDepositQueue[queue] ? $.defaultDepositHook : $.defaultRedeemHook;
@@ -254,13 +259,21 @@ abstract contract ShareModule is IShareModule, ACLModule {
         address queue = _msgSender();
         address asset = IQueue(queue).asset();
         ShareModuleStorage storage $ = _shareModuleStorage();
+        //@>i smgsender check
         if (!_shareModuleStorage().queues[asset].contains(queue)) {
             revert Forbidden();
         }
         address hook = getHook(queue);
+        /*@>i if the hook is default deposit hook and lidoDepositHook,
+         automatically convert deposited assets into wstETH (wrapped stETH) 
+         and then chain to any subsequent hook, 
+         enabling seamless integration with Lido’s liquid staking token
+        */
         if (hook != address(0)) {
+
             Address.functionDelegateCall(hook, abi.encodeCall(IHook.callHook, (asset, assets)));
         }
+        //@>i if this is redeemQueue
         if (!$.isDepositQueue[queue]) {
             TransferLibrary.sendAssets(asset, queue, assets);
         }

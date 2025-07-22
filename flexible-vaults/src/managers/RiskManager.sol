@@ -205,6 +205,7 @@ contract RiskManager is IRiskManager, ContextUpgradeable {
     /// @inheritdoc IRiskManager
     function modifyPendingAssets(address asset, int256 change) external onlyQueueOrRole(MODIFY_PENDING_ASSETS_ROLE) {
         RiskManagerStorage storage $ = _riskManagerStorage();
+
         int256 pendingAssetsBefore = $.pendingAssets[asset];
         int256 pendingSharesBefore = $.pendingShares[asset];
         int256 pendingAssetsAfter = pendingAssetsBefore + change;
@@ -225,9 +226,11 @@ contract RiskManager is IRiskManager, ContextUpgradeable {
         int256 shares = convertToShares(asset, change);
         RiskManagerStorage storage $ = _riskManagerStorage();
         int256 newBalance = $.vaultState.balance + shares;
+
         if (shares > 0 && newBalance + $.pendingBalance > $.vaultState.limit) {
             revert LimitExceeded(newBalance + $.pendingBalance, $.vaultState.limit);
         }
+        //@>i balance means share amount
         $.vaultState.balance = newBalance;
         emit ModifyVaultBalance(asset, shares, newBalance);
     }

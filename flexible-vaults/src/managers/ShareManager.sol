@@ -56,6 +56,11 @@ abstract contract ShareManager is IShareManager, ContextUpgradeable {
             return false;
         }
         bytes32 whitelistMerkleRoot_ = $.whitelistMerkleRoot;
+        //@>q why do we check if whitelistMerkleRoot_ is 0? 
+        //@>q how does MerkleProof.verify work?
+        //@>q what is the purpose of the whitelistMerkleRoot_?
+        //@>q why do we use keccak256(bytes.concat(keccak256(abi.encode(account))))?
+        //@>q why do we use keccak256(abi.encode(account))?
         return whitelistMerkleRoot_ == bytes32(0)
             || MerkleProof.verify(
                 merkleProof, whitelistMerkleRoot_, keccak256(bytes.concat(keccak256(abi.encode(account))))

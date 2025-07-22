@@ -62,7 +62,9 @@ interface IDepositQueue is IQueue {
     struct DepositQueueStorage {
         /// @dev Iterator representing the number of fully processed `timestamps`.
         /// Each timestamp may correspond to multiple user requests.
-        uint256 handledIndices; //@>q where do they use this? 
+        //@>i this is the index of the last processed timestamp in the Fenwick tree
+        //@>i this is used to track how many requests have been processed so far
+        uint256 handledIndices;  //@>q what is the max possible value of this? how many requests can be processed in total? 
         /// @dev Mapping of user address to their latest deposit request.
         /// Each request is stored as a checkpoint with timestamp (key) and asset amount (value).
         mapping(address account => Checkpoints.Checkpoint224) requestOf; //@>q what's the max possible number of asset amount? 
