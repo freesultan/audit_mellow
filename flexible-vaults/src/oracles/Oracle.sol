@@ -54,6 +54,7 @@ contract Oracle is IOracle, ContextUpgradeable, ReentrancyGuardUpgradeable {
     function supportedAssetAt(uint256 index) public view returns (address) {
         return _oracleStorage().supportedAssets.at(index);
     }
+    
 
     /// @inheritdoc IOracle
     function isSupportedAsset(address asset) public view returns (bool) {
@@ -62,6 +63,8 @@ contract Oracle is IOracle, ContextUpgradeable, ReentrancyGuardUpgradeable {
 
     /// @inheritdoc IOracle
     function getReport(address asset) public view returns (DetailedReport memory) {
+        //@>q each asset has only one report?
+        
         OracleStorage storage $ = _oracleStorage();
         if (!$.supportedAssets.contains(asset)) {
             revert UnsupportedAsset(asset);
