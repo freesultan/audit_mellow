@@ -21,3 +21,6 @@ flexible-vaults/test/integration/BaseIntegrationTest.sol
 - 
 -
 ### data validation
+## 
+- every queue is for one asset
+- every queue is owned by one `vault`
