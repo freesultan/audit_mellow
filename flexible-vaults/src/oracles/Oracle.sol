@@ -63,7 +63,7 @@ contract Oracle is IOracle, ContextUpgradeable, ReentrancyGuardUpgradeable {
 
     /// @inheritdoc IOracle
     function getReport(address asset) public view returns (DetailedReport memory) {
-        //@>q each asset has only one report?
+        //@>i each asset has only one report which is updated on each report submission
         
         OracleStorage storage $ = _oracleStorage();
         if (!$.supportedAssets.contains(asset)) {
@@ -91,6 +91,15 @@ contract Oracle is IOracle, ContextUpgradeable, ReentrancyGuardUpgradeable {
 
     /// @inheritdoc IOracle
     function setVault(address vault_) external {
+        /*@>audit anyone can front-run this function to set the vault
+         attacker can set the vault to a malicious contract by monitoring the transaction pool
+         and then calling this function before the actual transaction is mined.
+         This can lead to a situation where the oracle is compromised, allowing the attacker to manipulate prices
+         and potentially exploit the system.
+         but they use flashbots/private pools to prevent this.
+         */
+
+        //@>i if the vault is already set, it cannot be set.
         if (vault_ == address(0)) {
             revert ZeroValue();
         }
@@ -106,8 +115,10 @@ contract Oracle is IOracle, ContextUpgradeable, ReentrancyGuardUpgradeable {
     function submitReports(Report[] calldata reports) external nonReentrant onlyRole(SUBMIT_REPORTS_ROLE) {
         OracleStorage storage $ = _oracleStorage();
         SecurityParams memory securityParams_ = $.securityParams;
+
         uint32 depositTimestamp = uint32(block.timestamp - securityParams_.depositInterval);
         uint32 redeemTimestamp = uint32(block.timestamp - securityParams_.redeemInterval);
+        
         IShareModule vault_ = $.vault;
         EnumerableSet.AddressSet storage supportedAssets_ = $.supportedAssets;
         mapping(address asset => DetailedReport) storage reports_ = $.reports;

@@ -78,6 +78,7 @@ contract Factory is IFactory, OwnableUpgradeable {
 
     /// @inheritdoc IFactory
     function proposeImplementation(address implementation) external {
+        //@>i Everyone can propose an implementation
         FactoryStorage storage $ = _factoryStorage();
         if ($.implementations.contains(implementation)) {
             revert ImplementationAlreadyAccepted(implementation);
