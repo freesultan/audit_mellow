@@ -55,7 +55,7 @@ contract Oracle is IOracle, ContextUpgradeable, ReentrancyGuardUpgradeable {
         return _oracleStorage().supportedAssets.at(index);
     }
     
-
+    //@>i this is called when createqueue in sharemodule 
     /// @inheritdoc IOracle
     function isSupportedAsset(address asset) public view returns (bool) {
         return _oracleStorage().supportedAssets.contains(asset);
@@ -116,17 +116,24 @@ contract Oracle is IOracle, ContextUpgradeable, ReentrancyGuardUpgradeable {
         OracleStorage storage $ = _oracleStorage();
         SecurityParams memory securityParams_ = $.securityParams;
 
+        //@>i depositTimestamp = depositInterval old 
         uint32 depositTimestamp = uint32(block.timestamp - securityParams_.depositInterval);
         uint32 redeemTimestamp = uint32(block.timestamp - securityParams_.redeemInterval);
         
         IShareModule vault_ = $.vault;
         EnumerableSet.AddressSet storage supportedAssets_ = $.supportedAssets;
         mapping(address asset => DetailedReport) storage reports_ = $.reports;
+
+   
+         
+        //@>q if we have 100 reports and one of them is not valid, do we revert the whole transaction or just skip that report?
+        //@>q are vault.handleReports are called singly or in a batch?
         for (uint256 i = 0; i < reports.length; i++) {
             Report calldata report = reports[i];
             if (!supportedAssets_.contains(report.asset)) {
                 revert UnsupportedAsset(report.asset);
             }
+            //@>i if the report is valid and is not suspicious then call the handleReport function in the vault
             if (_handleReport(securityParams_, report.priceD18, reports_[report.asset])) {
                 vault_.handleReport(report.asset, report.priceD18, depositTimestamp, redeemTimestamp);
             }
@@ -204,12 +211,17 @@ contract Oracle is IOracle, ContextUpgradeable, ReentrancyGuardUpgradeable {
         return !isSuspicious;
     }
 
+     //@>i validate the price against the previous report and security parameters
+    /// @param priceD18 The price to validate in 18-decimal fixed-point format
+    /// @param report The previous report for the asset
+    /// @param params The security parameters of the oracle
     function _validatePrice(uint256 priceD18, DetailedReport storage report, SecurityParams memory params)
         private
         view
         returns (bool isValid, bool isSuspicious)
     {
         uint256 prevPriceD18 = report.priceD18;
+        //@>i if the previous price is 0, it means this is the first report for this asset and it flags as suspicious
         if (prevPriceD18 == 0) {
             return (true, true);
         }
@@ -217,7 +229,8 @@ contract Oracle is IOracle, ContextUpgradeable, ReentrancyGuardUpgradeable {
         uint256 relativeDeviationD18 = Math.mulDiv(absoluteDeviation, 1 ether, prevPriceD18);
         if (absoluteDeviation > params.maxAbsoluteDeviation || relativeDeviationD18 > params.maxRelativeDeviationD18) {
             return (false, false);
-        }
+        } 
+        //@>q if the previous report is suspicious, the  subsecuent reports are also suspicious? 
         if (report.isSuspicious) {
             return (true, true);
         }

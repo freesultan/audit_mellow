@@ -286,18 +286,24 @@ abstract contract ShareModule is IShareModule, ACLModule {
         nonReentrant
     {
         ShareModuleStorage storage $ = _shareModuleStorage();
+        //@>i oracle 1:1 vault
         if (_msgSender() != $.oracle) {
             revert Forbidden();
         }
         IShareManager shareManager_ = IShareManager($.shareManager);
         IFeeManager feeManager_ = IFeeManager($.feeManager);
+        //@>i combined performance and protocol fee in shares
         uint256 fees = feeManager_.calculateFee(address(this), asset, priceD18, shareManager_.totalShares());
         if (fees != 0) {
             shareManager_.mint(feeManager_.feeRecipient(), fees);
+            //@>audit there is no mechanism to reset the fees or watermark after fees  are collected
         }
+        //@>i set theh feeManager.timestamps and minPriceD18 for the vault
         feeManager_.updateState(asset, priceD18);
+
         EnumerableSet.AddressSet storage queues = _shareModuleStorage().queues[asset];
         uint256 length = queues.length();
+        //@>i loop through all queues for the asset
         for (uint256 i = 0; i < length; i++) {
             address queue = queues.at(i);
             IQueue(queue).handleReport(priceD18, $.isDepositQueue[queue] ? depositTimestamp : redeemTimestamp);

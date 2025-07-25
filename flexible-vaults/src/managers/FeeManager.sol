@@ -71,14 +71,28 @@ contract FeeManager is IFeeManager, OwnableUpgradeable {
         view
         returns (uint256 shares)
     {
+        
         FeeManagerStorage storage $ = _feeManagerStorage();
+        //@>i perfomance fee calculation only for baseAsset (Every vault has a base asset)
         if (asset == $.baseAsset[vault]) {
             uint256 minPriceD18_ = $.minPriceD18[vault];
+            //@>i if the current price is less than the minimum historical recorded price( Watermark), calculate performance fee
+            //@>i Lower price = fewer shares per asset = better vault performance
             if (priceD18 < minPriceD18_ && minPriceD18_ != 0) {
+                //@>i 1e18 * 1e6 = 1e24 / 1e24
                 shares = Math.mulDiv(minPriceD18_ - priceD18, $.performanceFeeD6 * totalShares, 1e24);
             }
         }
+
+        //@>i protocol fee calculation based on last recorded timestamp
+        // If the timestamp is zero, it means the protocol fee has not been recorded yet
+        // The protocol fee is calculated as a fraction of the total shares based on the time elapsed
+        // The formula used is: (totalShares * protocolFeeD6 * (currentTimestamp - recordedTimestamp)) / (365 * 1e6 days)
+        // This effectively accrues the protocol fee over time, assuming a yearly rate
+        // The protocol fee is expressed in D6 precision, meaning it is scaled by 1e6
+        // The result is added to `shares`, which represents the total fee in shares to be deducted
         uint256 timestamp = $.timestamps[vault];
+
         if (timestamp != 0 && block.timestamp > timestamp) {
             shares += Math.mulDiv(totalShares, $.protocolFeeD6 * (block.timestamp - timestamp), 365e6 days);
         }
@@ -112,14 +126,18 @@ contract FeeManager is IFeeManager, OwnableUpgradeable {
         emit SetBaseAsset(vault, baseAsset_);
     }
 
+    //@>q why there is no setminPriceD18 function? 
+
     /// @inheritdoc IFeeManager
     function updateState(address asset, uint256 priceD18) external {
         FeeManagerStorage storage $ = _feeManagerStorage();
         address vault = _msgSender();
+
         if ($.baseAsset[vault] != asset) {
             return;
         }
         uint256 minPriceD18_ = $.minPriceD18[vault];
+        //@>i update the minPriceD18 and timestamps for the vault. saving and tracking low watermark, why?
         if (minPriceD18_ == 0 || minPriceD18_ > priceD18) {
             $.minPriceD18[vault] = priceD18;
         }
