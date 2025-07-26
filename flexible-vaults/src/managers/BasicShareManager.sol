@@ -33,7 +33,7 @@ contract BasicShareManager is ShareManager {
     }
 
     // Internal functions
-
+    //@>test  Fuzz share mint/burn, fee mint, and risk modifications in random sequences to find invariant breaks.
     function _mintShares(address account, uint256 value) internal override {
         if (account == address(0)) {
             revert IERC20Errors.ERC20InvalidReceiver(address(0));

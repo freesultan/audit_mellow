@@ -96,6 +96,8 @@ contract RedeemQueue is IRedeemQueue, Queue {
         }
         IShareManager shareManager_ = IShareManager(IShareModule(vault_).shareManager());
         shareManager_.burn(caller, shares);
+
+         //@>i calculate and mint redeem fees
         {
             IFeeManager feeManager = IShareModule(vault_).feeManager();
             uint256 fees = feeManager.calculateRedeemFee(shares);
@@ -108,7 +110,9 @@ contract RedeemQueue is IRedeemQueue, Queue {
         RedeemQueueStorage storage $ = _redeemQueueStorage();
         uint32 timestamp = uint32(block.timestamp);
         Checkpoints.Trace224 storage timestamps = _timestamps();
+
         uint256 index = timestamps.length();
+        
         (, uint32 latestTimestamp,) = timestamps.latestCheckpoint();
         if (latestTimestamp < timestamp) {
             timestamps.push(timestamp, uint224(index));
@@ -166,19 +170,27 @@ contract RedeemQueue is IRedeemQueue, Queue {
 
     /// @inheritdoc IRedeemQueue
     function handleBatches(uint256 batches) external nonReentrant returns (uint256 counter) {
+        //@>q everyon can run handleBatches?
         RedeemQueueStorage storage $ = _redeemQueueStorage();
         uint256 iterator_ = $.batchIterator;
         uint256 length = $.batches.length;
         if (iterator_ >= length || batches == 0) {
             return 0;
         }
+        //@>i if batches is larger than remaining batches, set it to remaining
+        // This ensures we don't try to process more batches than available.
         batches = Math.min(batches, length - iterator_);
 
         IShareModule vault_ = IShareModule(vault());
+        //@>i get balance of this asset from sharemodule/vault
+        // This is the total liquid assets available for redemption.
         uint256 liquidAssets = vault_.getLiquidAssets();
+
         uint256 demand = 0;
         uint256 shares = 0;
+
         Batch memory batch;
+
         for (uint256 i = 0; i < batches; i++) {
             batch = $.batches[iterator_ + i];
             if (demand + batch.assets > liquidAssets) {

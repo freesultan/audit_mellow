@@ -64,6 +64,7 @@ contract FeeManager is IFeeManager, OwnableUpgradeable {
     function calculateRedeemFee(uint256 shares) public view returns (uint256) {
         return (shares * redeemFeeD6()) / 1e6;
     }
+    //@>Test Simulate large TVL, massive fee rates, long stale intervals
 
     /// @inheritdoc IFeeManager
     function calculateFee(address vault, address asset, uint256 priceD18, uint256 totalShares)
@@ -137,7 +138,8 @@ contract FeeManager is IFeeManager, OwnableUpgradeable {
             return;
         }
         uint256 minPriceD18_ = $.minPriceD18[vault];
-        //@>i update the minPriceD18 and timestamps for the vault. saving and tracking low watermark, why?
+        //@>i update the minPriceD18 and timestamps for the vault. saving and tracking low watermark,
+        //@>q this only update minPriced18 if the current price is lower than the previous minimum, but what if price rises and the drops?
         if (minPriceD18_ == 0 || minPriceD18_ > priceD18) {
             $.minPriceD18[vault] = priceD18;
         }

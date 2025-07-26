@@ -113,6 +113,7 @@ contract Oracle is IOracle, ContextUpgradeable, ReentrancyGuardUpgradeable {
 
     /// @inheritdoc IOracle
     function submitReports(Report[] calldata reports) external nonReentrant onlyRole(SUBMIT_REPORTS_ROLE) {
+        
         OracleStorage storage $ = _oracleStorage();
         SecurityParams memory securityParams_ = $.securityParams;
 

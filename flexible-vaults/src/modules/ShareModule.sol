@@ -147,11 +147,14 @@ abstract contract ShareModule is IShareModule, ACLModule {
     function getLiquidAssets() public view returns (uint256) {
         address queue = _msgSender();
         address asset = IQueue(queue).asset();
+
         ShareModuleStorage storage $ = _shareModuleStorage();
         if (!$.queues[asset].contains(queue) || $.isDepositQueue[queue]) {
             revert Forbidden();
         }
         address hook = getHook(queue);
+        // If the hook is not set, return the balance of the asset in the contract
+        // Otherwise, call the hook to get the liquid assets
         return hook == address(0) ? IERC20(asset).balanceOf(address(this)) : IRedeemHook(hook).getLiquidAssets(asset);
     }
 

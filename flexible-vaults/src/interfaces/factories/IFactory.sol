@@ -29,6 +29,7 @@ interface IFactory is IFactoryEntity {
         EnumerableSet.AddressSet entities; // Set of deployed upgradeable proxies
         EnumerableSet.AddressSet implementations; // Set of accepted implementation addresses
         EnumerableSet.AddressSet proposals; // Set of currently proposed (but not yet accepted) implementations
+        //@>i version is a uint256 index for implementations
         mapping(uint256 version => bool) isBlacklisted; // Tracks whether a given version is blacklisted
     }
 

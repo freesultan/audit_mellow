@@ -78,6 +78,9 @@ contract DepositQueue is IDepositQueue, Queue {
     //@>test many deposits in one bucket, then cancel one of them
     //@>test many deposits in one bucket, then claim one of them
     //@>test many deposits in one bucket, then claim all of them
+    //@>test Race Conditions: simultaneous deposit/cancel calls leading to inconsistent pendingAssets.
+    //@>test Deposit amounts at zero, one unit, just below/above limits.
+    //@>test  Verify ShareModule → FeeManager → RiskManager → Queue interactions for atomicity.
     function deposit(uint224 assets, address referral, bytes32[] calldata merkleProof) external payable nonReentrant {
         if (assets == 0) {
             revert ZeroValue();
@@ -96,6 +99,7 @@ contract DepositQueue is IDepositQueue, Queue {
         //@>i check if the caller has a pending request = a request that has not been claimed yet
         //@>i each deposit claims for caller, if successful, will reset the request to zero and go on this deposit
         if ($.requestOf[caller]._value != 0 && !_claim(caller)) {
+            //@>q attacker: how revert? dos?
             revert PendingRequestExists();
         }
 
@@ -131,7 +135,7 @@ contract DepositQueue is IDepositQueue, Queue {
         }
         //@>i update pending assets, pending shares, and pending balance in the riskmanager storage
         IVaultModule(vault_).riskManager().modifyPendingAssets(asset_, int256(uint256(assets)));
-
+        //@>i update menwick tree with the new deposit request so that we can track the deposits and their timestamps
         $.requests.modify(index, int256(uint256(assets)));//@>i this will propagate updates through fenwik tree stated with index. add assets to every needed position in array. assets = sum of deposit requests in one bucket(interval)
         //@>i store the request in the requestOf mapping
         $.requestOf[caller] = Checkpoints.Checkpoint224(timestamp, assets);
@@ -177,6 +181,7 @@ contract DepositQueue is IDepositQueue, Queue {
          
         emit DepositRequestCanceled(caller, assets, request._key);
     }
+    //@>q how can someone double claim? or claim more? 
     //@>q does after creating shares or/and claiming them, the values reset to zero? or they are still in the tree? is so, are they exploitable?
     /// @inheritdoc IDepositQueue
     function claim(address account) external returns (bool) {
@@ -202,6 +207,7 @@ contract DepositQueue is IDepositQueue, Queue {
         delete $.requestOf[account];
         //@>q is it possible that shares are 0?  
         if (shares != 0) {
+            //@>test totalShares = Σ(userBalances) + allocatedShares + contractHeldShares
             IShareModule(vault()).shareManager().mintAllocatedShares(account, shares);
         }
         emit DepositRequestClaimed(account, shares, request._key);
@@ -255,6 +261,7 @@ contract DepositQueue is IDepositQueue, Queue {
             IShareManager shareManager_ = vault_.shareManager();
             uint256 shares = Math.mulDiv(assets, reducedPriceD18, 1 ether);
             if (shares > 0) {
+                //@>q is there a race condition between minting,allocation, and claiming?
                 //@>i add shares to the total shares in the share manager storage
                 shareManager_.allocateShares(shares);
             }

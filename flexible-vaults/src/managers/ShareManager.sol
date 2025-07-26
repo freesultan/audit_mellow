@@ -229,6 +229,7 @@ abstract contract ShareManager is IShareManager, ContextUpgradeable {
         if (value == 0) {
             revert ZeroValue();
         }
+        //@>i wait for targetLockup between mints(mintAllocatedShares)
         _mintShares(account, value);
         ShareManagerStorage storage $ = _shareManagerStorage();
         uint32 targetLockup = $.flags.getTargetedLockup();

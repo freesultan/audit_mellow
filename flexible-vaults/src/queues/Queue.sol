@@ -36,6 +36,9 @@ abstract contract Queue is IQueue, ContextUpgradeable, ReentrancyGuardUpgradeabl
         if (_msgSender() != vault()) {
             revert Forbidden();
         }
+        //@>q how  does this condition work? if priceD18 is 0, it means no price was reported, so we revert
+        //@>q if timestamp is greater than or equal to current block timestamp, it means the report is in the future, so we revert, 
+        //@>q can manipulate the timestamp to be in the future?
         if (priceD18 == 0 || timestamp >= block.timestamp) {
             revert InvalidReport();
         }
