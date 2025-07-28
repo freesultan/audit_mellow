@@ -123,7 +123,9 @@ library FenwickTreeLibrary {
         assembly ("memory-safe") {
             mstore(0x20, tree.slot)
 
-            for {} 1 { index := sub(index, 1) } {
+            for {} 1 { index := sub(index, 1) }
+            
+             {
                 mstore(0x00, index)
                 prefixSum := add(prefixSum, sload(keccak256(0x00, 0x40)))
                 index := and(index, add(index, 1))

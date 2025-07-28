@@ -91,7 +91,7 @@ contract Oracle is IOracle, ContextUpgradeable, ReentrancyGuardUpgradeable {
 
     /// @inheritdoc IOracle
     function setVault(address vault_) external {
-        /*@>audit anyone can front-run this function to set the vault
+        /*@>audit(not valid) anyone can front-run this function to set the vault
          attacker can set the vault to a malicious contract by monitoring the transaction pool
          and then calling this function before the actual transaction is mined.
          This can lead to a situation where the oracle is compromised, allowing the attacker to manipulate prices

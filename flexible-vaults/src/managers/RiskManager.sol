@@ -108,6 +108,7 @@ contract RiskManager is IRiskManager, ContextUpgradeable {
     function convertToShares(address asset, int256 value) public view returns (int256 shares) {
         RiskManagerStorage storage $ = _riskManagerStorage();
         IOracle.DetailedReport memory report = IShareModule($.vault).oracle().getReport(asset);
+
         if (report.isSuspicious || report.priceD18 == 0) {
             revert InvalidReport();
         }
@@ -145,6 +146,7 @@ contract RiskManager is IRiskManager, ContextUpgradeable {
     }
 
     function setVault(address vault_) external {
+        
         if (vault_ == address(0)) {
             revert ZeroValue();
         }

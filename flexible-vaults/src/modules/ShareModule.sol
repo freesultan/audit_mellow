@@ -240,6 +240,7 @@ abstract contract ShareModule is IShareModule, ACLModule {
 
     /// @inheritdoc IShareModule
     function claimShares(address account) external {
+        //@>q how attacker can dos using this function?
         ShareModuleStorage storage $ = _shareModuleStorage();
         EnumerableSet.AddressSet storage assets = $.assets;
         uint256 assetsCount = assets.length();
@@ -299,7 +300,7 @@ abstract contract ShareModule is IShareModule, ACLModule {
         uint256 fees = feeManager_.calculateFee(address(this), asset, priceD18, shareManager_.totalShares());
         if (fees != 0) {
             shareManager_.mint(feeManager_.feeRecipient(), fees);
-            //@>audit there is no mechanism to reset the fees or watermark after fees  are collected
+            //@>audit(design choice) there is no mechanism to reset the fees or watermark after fees  are collected
         }
         //@>i set theh feeManager.timestamps and minPriceD18 for the vault
         feeManager_.updateState(asset, priceD18);

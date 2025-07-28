@@ -67,7 +67,7 @@ interface IDepositQueue is IQueue {
         uint256 handledIndices;  //@>q what is the max possible value of this? how many requests can be processed in total? 
         /// @dev Mapping of user address to their latest deposit request.
         /// Each request is stored as a checkpoint with timestamp (key) and asset amount (value).
-        mapping(address account => Checkpoints.Checkpoint224) requestOf; //@>q what's the max possible number of asset amount? 
+        mapping(address account => Checkpoints.Checkpoint224) requestOf;  
         /// @dev Fenwick tree tracking cumulative asset deposits by timestamp indices.
         /// Enables efficient range sum queries and updates for oracle processing.
         FenwickTreeLibrary.Tree requests;

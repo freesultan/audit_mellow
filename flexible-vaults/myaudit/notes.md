@@ -10,6 +10,15 @@ flexible-vaults/test/integration/BaseIntegrationTest.sol
 ## Ideas
 - focus on logic errors and data validations
 - 
+### 1
+ 
+ monitor all accounts in a vault (all queues of all assets)
+ call claimshare for the lowset balance accounts where shares is near 0
+ or call claimshare for his own addresses with very low balance near 0 
+
+ or front run users redeem request and call claimshares from sharemodule/claim from depositQueue for that account,
+### 2 
+
 
 ## checklist
 ### Signature validation

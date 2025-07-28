@@ -38,6 +38,7 @@ contract BasicShareManager is ShareManager {
         if (account == address(0)) {
             revert IERC20Errors.ERC20InvalidReceiver(address(0));
         }
+        
         updateChecks(address(0), account);
         ERC20Upgradeable.ERC20Storage storage $ = _getERC20Storage();
         $._totalSupply += value;

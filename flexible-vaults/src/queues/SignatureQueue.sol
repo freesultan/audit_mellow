@@ -86,6 +86,8 @@ abstract contract SignatureQueue is
         if (order.deadline < block.timestamp) {
             revert OrderExpired(order.deadline);
         }
+        //@>q why do we check if order.queue is not address(this)?
+         
         if (order.queue != address(this)) {
             revert InvalidQueue(order.queue);
         }

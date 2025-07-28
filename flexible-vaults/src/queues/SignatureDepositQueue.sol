@@ -8,6 +8,7 @@ contract SignatureDepositQueue is SignatureQueue {
         SignatureQueue(name_, version_, consensusFactory_)
     {}
 
+        //@>i call deposit with order and array of signatures
     function deposit(Order calldata order, IConsensus.Signature[] calldata signatures) external payable nonReentrant {
         validateOrder(order, signatures);
         _signatureQueueStorage().nonces[order.caller]++;
