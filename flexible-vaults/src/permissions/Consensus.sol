@@ -20,6 +20,8 @@ contract Consensus is IConsensus, OwnableUpgradeable {
     /// @inheritdoc IConsensus
     function checkSignatures(bytes32 orderHash, Signature[] calldata signatures) public view returns (bool) {
         ConsensusStorage storage $ = _consensusStorage();
+        //@>missed: doesn't check duplication of signers,attacker can bypass threshold checking.
+        //@> I didnt test this condition and how attacker can bypass threshold checking.
         if (signatures.length == 0 || signatures.length < $.threshold) {
             return false;
         }

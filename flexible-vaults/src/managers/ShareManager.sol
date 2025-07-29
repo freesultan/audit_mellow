@@ -141,6 +141,8 @@ abstract contract ShareManager is IShareManager, ContextUpgradeable {
                     revert TransferPaused();
                 }
                 if (flags_.hasTransferWhitelist()) {
+                    //@>Missed I didn't check this on a paper. I din't test the condition 
+                    //@> it should be !info.canTransfer && !$.accounts[to].canTransfer
                     if (info.canTransfer || !$.accounts[to].canTransfer) {
                         revert TransferNotAllowed(from, to);
                     }

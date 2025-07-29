@@ -196,11 +196,16 @@ contract DepositQueue is IDepositQueue, Queue {
         //@>i the existance of the request has checked in the deposit function where _claim is called
         //@>i prices is a collection of checkpoints, each checkpoint is a timestamp and price
         //@>i lowerLookup returns the price for the given timestamp
+        
         uint256 priceD18 = $.prices.lowerLookup(request._key);
         //@>q why do we check if priceD18 is 0? is it possible?
         if (priceD18 == 0) {
             return false;
         }
+        //@>missed Unified Share Minting Across Assets Enables Cross-Asset Arbitrage
+        //@> simply I didn't test how shares are minted and allocated. I just assume that they are minted and allocated correctly.
+        //@> the protocol assumes all assets are in 18  decimal but usdc is 6 decimal, so we need to convert it to 18 decimal
+        //@> attacker can deposit DAI from dai depositQuesen and redeem sharesin USDC from usds redeemQueue!!!!
         //@>i shares = assets * price / 1 ether
         uint256 shares = Math.mulDiv(request._value, priceD18, 1 ether);
 
@@ -230,6 +235,10 @@ contract DepositQueue is IDepositQueue, Queue {
             if (latestTimestamp <= timestamp) {
                 latestEligibleIndex = latestIndex;
             } else {//@>i upperLookupRecent returns the index of the last timestamp that is less than or equal to the given timestamp
+            //@>missed diffrenet ways to get the price in _claim and _handleReport. 
+            //@> lowerlookup returns the lower timestamp that is less than or equal to the given timestamp
+             //@> updderlookupRecent returns the upper timestamp that is less than or equal to the given timestamp, it doesn't need for -- .
+            //@> why? I didn't know the right functionality of upperlookup!! I didn't test indeces and timestamps in the tree.
                 latestEligibleIndex = uint256(timestamps.upperLookupRecent(timestamp));
                 if (latestEligibleIndex == 0) {
                     return;
