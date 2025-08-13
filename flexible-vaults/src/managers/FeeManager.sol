@@ -95,6 +95,13 @@ contract FeeManager is IFeeManager, OwnableUpgradeable {
         uint256 timestamp = $.timestamps[vault];
 
         if (timestamp != 0 && block.timestamp > timestamp) {
+            /*@>missed exponential compounding instead of linear accumulation leading to higher-than-intended fee extraction
+            every time this function is called, it also includes shares which have already been accrued
+            this can lead to an exponential increase in the fee over time, especially if the function is
+            called frequently or if the time interval between calls is short.
+             
+            It's better to calculate the fee based on assets then mint shared to the fee recipient
+            */
             shares += Math.mulDiv(totalShares, $.protocolFeeD6 * (block.timestamp - timestamp), 365e6 days);
         }
     }
@@ -133,7 +140,10 @@ contract FeeManager is IFeeManager, OwnableUpgradeable {
     function updateState(address asset, uint256 priceD18) external {
         FeeManagerStorage storage $ = _feeManagerStorage();
         address vault = _msgSender();
-
+        /*@>missed if the asset is not base addet don't update the timestamp. 
+        why missed? because I didn't know why this condition is used, what happens if this condition is not here?
+        finder: timestamp should be updated even for non-base assets, as it tracks the last update time for the vault.
+        */
         if ($.baseAsset[vault] != asset) {
             return;
         }
@@ -177,6 +187,9 @@ contract FeeManager is IFeeManager, OwnableUpgradeable {
     function _setFees(uint24 depositFeeD6_, uint24 redeemFeeD6_, uint24 performanceFeeD6_, uint24 protocolFeeD6_)
         internal
     {
+        /*
+        @>missed (medium) we must force fee collection before setting new fees
+        */
         if (depositFeeD6_ + redeemFeeD6_ + performanceFeeD6_ + protocolFeeD6_ > 1e6) {
             revert InvalidFees(depositFeeD6_, redeemFeeD6_, performanceFeeD6_, protocolFeeD6_);
         }

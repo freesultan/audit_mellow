@@ -260,9 +260,19 @@ contract RedeemQueue is IRedeemQueue, Queue {
             counter++;
         }
 
+        /* 
+        @>missed (medium dos) getliquidAssets get all assets in the vault and subvaults 
+        but in callHook and modifyVaultBalance, it gets assets from subvault which do not include notAllowedAssets
+        Any user can send unsupported asset to a subvault and cause dos
+        Why missed? I didn't trace the callHook and modifyVaultBalance functions to see if they are called with the right asset.
+
+        */
+
         if (counter > 0) {
             if (demand > 0) {
+
                 vault_.callHook(demand);
+
                 IVaultModule(address(vault_)).riskManager().modifyVaultBalance(
                     asset(),
                     -int256(uint256(demand))

@@ -153,6 +153,7 @@ abstract contract ShareModule is IShareModule, ACLModule {
             revert Forbidden();
         }
         address hook = getHook(queue);
+        //@>missed if the asset in the Queue is native token, there is no way to get the balance of it and unable to withdraw it 
         // If the hook is not set, return the balance of the asset in the contract
         // Otherwise, call the hook to get the liquid assets
         return hook == address(0) ? IERC20(asset).balanceOf(address(this)) : IRedeemHook(hook).getLiquidAssets(asset);
@@ -302,7 +303,7 @@ abstract contract ShareModule is IShareModule, ACLModule {
             shareManager_.mint(feeManager_.feeRecipient(), fees);
             //@>audit(design choice) there is no mechanism to reset the fees or watermark after fees  are collected
         }
-        //@>i set theh feeManager.timestamps and minPriceD18 for the vault
+        //@>i set the feeManager.timestamps and minPriceD18 for the vault
         feeManager_.updateState(asset, priceD18);
 
         EnumerableSet.AddressSet storage queues = _shareModuleStorage().queues[asset];
